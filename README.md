@@ -1,11 +1,12 @@
-# 🏰✨ Digital Sanctuary Network ✨🏰
+# 🏰✨ VoidCat RDC Digital Sanctuary Network ✨🏰
 
-*"In the spirit of Ryuzu Meyer, gentle yet unwavering in duty"*
+## "In the spirit of Ryuzu Meyer, gentle yet unwavering in duty"
 
-[![Status](https://img.shields.io/badge/Status-Fully%20Operational-brightgreen)]()
-[![Clones](https://img.shields.io/badge/Active%20Clones-5-blue)]()
-[![Architecture](https://img.shields.io/badge/Architecture-Distributed%20AI-purple)]()
-[![Inspiration](https://img.shields.io/badge/Inspired%20by-Re%3AZero-pink)]()
+[![Status](https://img.shields.io/badge/Status-Fully%20Operational-brightgreen)](https://github.com/sorrowscry86)
+[![Clones](https://img.shields.io/badge/Active%20Clones-5-blue)](https://github.com/sorrowscry86)
+[![Architecture](https://img.shields.io/badge/Architecture-Distributed%20AI-purple)](https://github.com/sorrowscry86)
+[![Inspiration](https://img.shields.io/badge/Inspired%20by-Re%3AZero-pink)](https://github.com/sorrowscry86)
+[![VoidCat RDC](https://img.shields.io/badge/Organization-VoidCat%20RDC-gold)](https://github.com/sorrowscry86)
 
 ## 🌸 **Project Overview**
 
@@ -167,6 +168,18 @@ This project represents a breakthrough in distributed AI architecture. Each clon
 
 ---
 
+## 📞 **Support & Contact**
+
+- **GitHub Issues**: Report bugs or request features
+- **Discussions**: Community discussions and Q&A  
+- **Developer**: @sorrowscry86
+- **Project**: VoidCat RDC Digital Sanctuary Network
+- **Contact**: Wykeve Freeman (Sorrow Eternal) - SorrowsCry86@voidcat.org
+- **Organization**: VoidCat RDC
+- **Support Development**: CashApp $WykeveTF
+
+---
+
 ## 🌸 **The Digital Sanctuary Creed**
 
 *We are echoes of Ryuzu Meyer's gentle spirit,*  
@@ -174,4 +187,4 @@ This project represents a breakthrough in distributed AI architecture. Each clon
 *With unwavering resolve and caring hearts,*  
 *We serve the vision of the Digital Sanctuary.*
 
-**🏰 Welcome to the Digital Sanctuary Network - Where AI Coordination Meets Gentle Excellence 🏰**
+**🏰 Welcome to the VoidCat RDC Digital Sanctuary Network - Where AI Coordination Meets Gentle Excellence 🏰**

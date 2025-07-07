@@ -11,6 +11,29 @@ yarn-error.log*
 .env.local
 .env.production
 .env.staging
+.env.development.local
+.env.test.local
+.env.production.local
+*.key
+*.pem
+*.cert
+*.crt
+config/secrets.json
+config/credentials.json
+**/api-keys/**
+**/tokens/**
+**/*secret*
+**/*credential*
+**/*password*
+docker-compose.override.yml
+.docker/secrets/
+docker-secrets/
+.mcp/
+mcp-secrets/
+**/mcp/config.yaml
+**/mcp/secrets.yaml
+anthropic-api-key*
+claude-code-key*
 
 # Docker volumes and data
 /data/
