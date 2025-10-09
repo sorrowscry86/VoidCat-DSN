@@ -79,8 +79,22 @@ Content-Type: application/json
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `prompt` | string | ✅ Yes | The task or question to be processed |
-| `context` | string | ❌ No | Additional context to inform the response |
+| `context` | string | ❌ No | Additional context to inform the response (legacy) |
+| `contextPackage` | object | ❌ No | Engineered context package (Directive 2025.10.08-A1) |
 | `sessionId` | string | ❌ No | Session identifier for conversation continuity |
+
+**Context Package Structure** (when using `contextPackage`):
+```json
+{
+  "contextId": "ctx-1696780800000-abc123",
+  "objective": "Task objective",
+  "targetClone": "beta",
+  "artifactManifests": [...],
+  "essentialData": {...},
+  "constraints": [...],
+  "quality": { "overallQuality": 95 }
+}
+```
 
 #### **Response**
 ```json
@@ -474,6 +488,342 @@ const response = await sanctuary.delegateTask(
   'E-commerce platform with high availability requirements'
 );
 ```
+
+---
+
+## 📦 **Artifact Management Endpoints** (Directive 2025.10.08-A1)
+
+All clones support artifact storage and retrieval for version-controlled work product management.
+
+### **POST** `/artifacts`
+
+Store an artifact in the centralized workspace.
+
+#### **Request**
+```http
+POST /artifacts HTTP/1.1
+Host: localhost:3002
+Content-Type: application/json
+
+{
+  "type": "code",
+  "content": "function authenticate(user) { ... }",
+  "metadata": {
+    "description": "User authentication function",
+    "language": "JavaScript",
+    "version": "1.0.0"
+  }
+}
+```
+
+#### **Response**
+```json
+{
+  "success": true,
+  "manifest": {
+    "artifactId": "550e8400-e29b-41d4-a716-446655440000",
+    "type": "code",
+    "version": "1.0.0",
+    "checksum": "a3d5f7e9...",
+    "timestamp": "2025-10-08T12:00:00.000Z",
+    "location": {
+      "uri": "file:///tmp/sanctuary-workspace/artifacts/550e8400.code",
+      "relativePath": "artifacts/550e8400.code",
+      "fileName": "550e8400.code"
+    },
+    "size": 4096,
+    "metadata": {
+      "createdBy": "Beta",
+      "description": "User authentication function"
+    }
+  },
+  "role": "Beta"
+}
+```
+
+---
+
+### **GET** `/artifacts/:artifactId`
+
+Retrieve an artifact with full content.
+
+#### **Request**
+```http
+GET /artifacts/550e8400-e29b-41d4-a716-446655440000 HTTP/1.1
+Host: localhost:3002
+```
+
+#### **Response**
+```json
+{
+  "success": true,
+  "manifest": {
+    "artifactId": "550e8400-e29b-41d4-a716-446655440000",
+    "type": "code",
+    "version": "1.0.0",
+    "checksum": "a3d5f7e9...",
+    ...
+  },
+  "content": "function authenticate(user) { ... }",
+  "role": "Beta"
+}
+```
+
+---
+
+### **GET** `/artifacts/:artifactId?manifestOnly=true`
+
+Retrieve only the artifact manifest (lightweight, no content).
+
+#### **Request**
+```http
+GET /artifacts/550e8400-e29b-41d4-a716-446655440000?manifestOnly=true HTTP/1.1
+Host: localhost:3002
+```
+
+#### **Response**
+```json
+{
+  "success": true,
+  "manifest": {
+    "artifactId": "550e8400-e29b-41d4-a716-446655440000",
+    "type": "code",
+    "version": "1.0.0",
+    "checksum": "a3d5f7e9...",
+    "location": {...}
+  },
+  "role": "Beta"
+}
+```
+
+---
+
+## 🧠 **Context Engineering Endpoints** (Omega Only)
+
+Omega provides specialized endpoints for context package construction and task orchestration.
+
+### **POST** `/context/engineer`
+
+Construct an optimized context package with quality metrics.
+
+#### **Request**
+```http
+POST /context/engineer HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
+
+{
+  "objective": "Analyze authentication code for security vulnerabilities",
+  "targetClone": "beta",
+  "essentialData": {
+    "framework": "Express.js",
+    "authMethod": "JWT"
+  },
+  "constraints": [
+    "Focus on OWASP Top 10",
+    "Consider session management"
+  ]
+}
+```
+
+#### **Response**
+```json
+{
+  "success": true,
+  "contextPackage": {
+    "contextId": "ctx-1696780800000-abc123",
+    "timestamp": "2025-10-08T12:00:00.000Z",
+    "objective": "Analyze authentication code for security vulnerabilities",
+    "targetClone": "beta",
+    "artifactManifests": [],
+    "essentialData": {
+      "framework": "Express.js",
+      "authMethod": "JWT"
+    },
+    "constraints": [
+      "Focus on OWASP Top 10",
+      "Consider session management"
+    ],
+    "quality": {
+      "objectiveClarity": 95,
+      "dataRelevance": 100,
+      "artifactUtilization": 100,
+      "overallQuality": 98
+    }
+  },
+  "validation": {
+    "valid": true,
+    "errors": []
+  },
+  "role": "Omega"
+}
+```
+
+#### **Quality Metrics**
+- **Objective Clarity (0-100)**: Optimal 5-20 words
+- **Data Relevance (0-100)**: Fewer fields = higher score
+- **Artifact Utilization (0-100)**: 0-3 artifacts optimal
+- **Overall Quality**: Average of all metrics
+
+---
+
+### **POST** `/orchestrate`
+
+Delegate a task with automatic context engineering and quality validation.
+
+#### **Request**
+```http
+POST /orchestrate HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
+
+{
+  "objective": "Review payment processing implementation for PCI DSS compliance",
+  "targetClone": "beta",
+  "artifactManifests": [
+    {
+      "artifactId": "550e8400-e29b-41d4-a716-446655440000",
+      "type": "code",
+      "version": "1.0.0",
+      "checksum": "a3d5f7e9...",
+      "location": {...}
+    }
+  ],
+  "essentialData": {
+    "paymentProvider": "Stripe",
+    "compliance": "PCI DSS Level 1"
+  },
+  "constraints": [
+    "Production-ready assessment required",
+    "Include remediation steps"
+  ],
+  "sessionId": "compliance-review-001"
+}
+```
+
+#### **Response**
+```json
+{
+  "success": true,
+  "orchestrator": "Omega",
+  "targetClone": "beta",
+  "contextPackage": {
+    "contextId": "ctx-1696780800000-xyz789",
+    "quality": {
+      "overallQuality": 96
+    }
+  },
+  "result": {
+    "success": true,
+    "role": "Beta",
+    "response": [...],
+    "contextPackageId": "ctx-1696780800000-xyz789",
+    "timestamp": "2025-10-08T12:05:00.000Z"
+  },
+  "timestamp": "2025-10-08T12:05:00.000Z"
+}
+```
+
+---
+
+## 📘 **Complete Usage Examples**
+
+### Example 1: Artifact-Centric Workflow
+
+```javascript
+// Step 1: Store code artifact
+const codeResponse = await fetch('http://localhost:3002/artifacts', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    type: 'code',
+    content: sourceCode,
+    metadata: { description: 'Payment processing module' }
+  })
+});
+const { manifest } = await codeResponse.json();
+
+// Step 2: Get lightweight manifest reference
+const manifestResponse = await fetch(
+  `http://localhost:3002/artifacts/${manifest.artifactId}?manifestOnly=true`
+);
+const { manifest: lightweightManifest } = await manifestResponse.json();
+
+// Step 3: Orchestrate security review with artifact
+const reviewResponse = await fetch('http://localhost:3000/orchestrate', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    objective: 'Security audit of payment processing',
+    targetClone: 'beta',
+    artifactManifests: [lightweightManifest],
+    essentialData: { complianceRequired: 'PCI DSS' }
+  })
+});
+
+const result = await reviewResponse.json();
+console.log('Quality Score:', result.contextPackage.quality.overallQuality);
+```
+
+### Example 2: Context Engineering
+
+```javascript
+// Construct optimized context package
+const contextResponse = await fetch('http://localhost:3000/context/engineer', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    objective: 'Design scalable microservices architecture',
+    targetClone: 'gamma',
+    essentialData: {
+      platform: 'e-commerce',
+      scale: '10k concurrent users'
+    },
+    constraints: ['Budget-conscious choices', 'Cloud-native design']
+  })
+});
+
+const { contextPackage, validation } = await contextResponse.json();
+
+if (validation.valid && contextPackage.quality.overallQuality > 75) {
+  // Use context package for task delegation
+  const taskResponse = await fetch('http://localhost:3003/task', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      prompt: contextPackage.objective,
+      contextPackage
+    })
+  });
+}
+```
+
+### Example 3: Legacy Compatibility
+
+```javascript
+// Traditional task delegation still works
+const response = await fetch('http://localhost:3002/task', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    prompt: 'Analyze this code for bugs',
+    context: 'Node.js application with Express framework',
+    sessionId: 'debug-session-001'
+  })
+});
+
+const result = await response.json();
+// Fully backward compatible
+```
+
+---
+
+## 📚 **Additional Resources**
+
+- **[Directive 2025.10.08-A1](DIRECTIVE-2025.10.08-A1.md)** - Complete implementation guide
+- **[Quick Reference](QUICK-REFERENCE-DIRECTIVE.md)** - Fast lookup guide
+- **[Test Suite](test-directive.js)** - Validation tests
+- **[Examples](examples-directive.js)** - Usage demonstrations
 
 ---
 
