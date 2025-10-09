@@ -13,11 +13,11 @@ class RyuzuOmega extends RyuzuClone {
         );
         this.setupDashboardRoutes();
         this.cloneEndpoints = {
-            omega: 'http://localhost:3000',
-            beta: 'http://localhost:3002',
-            gamma: 'http://localhost:3003',
-            delta: 'http://localhost:3004',
-            sigma: 'http://localhost:3005'
+            omega: process.env.OMEGA_URL || 'http://localhost:3000',
+            beta: process.env.BETA_URL || 'http://localhost:3002',
+            gamma: process.env.GAMMA_URL || 'http://localhost:3003',
+            delta: process.env.DELTA_URL || 'http://localhost:3004',
+            sigma: process.env.SIGMA_URL || 'http://localhost:3005'
         };
     }
 
@@ -94,28 +94,33 @@ Maintain your gentle, dutiful demeanor while being wise and decisive in your coo
 
         // Get health status of all clones
         this.app.get('/dashboard/health', async (req, res) => {
-            const cloneStatuses = {};
-            
-            for (const [cloneName, endpoint] of Object.entries(this.cloneEndpoints)) {
-                try {
-                    const response = await fetch(`${endpoint}/health`);
-                    if (response.ok) {
-                        cloneStatuses[cloneName] = await response.json();
-                    } else {
-                        cloneStatuses[cloneName] = { 
-                            status: 'error', 
-                            error: `HTTP ${response.status}`,
+            // Execute health checks in parallel for better performance
+            const healthCheckPromises = Object.entries(this.cloneEndpoints).map(
+                async ([cloneName, endpoint]) => {
+                    try {
+                        const response = await fetch(`${endpoint}/health`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            return [cloneName, data];
+                        } else {
+                            return [cloneName, { 
+                                status: 'error', 
+                                error: `HTTP ${response.status}`,
+                                timestamp: new Date().toISOString()
+                            }];
+                        }
+                    } catch (error) {
+                        return [cloneName, { 
+                            status: 'unreachable', 
+                            error: error.message,
                             timestamp: new Date().toISOString()
-                        };
+                        }];
                     }
-                } catch (error) {
-                    cloneStatuses[cloneName] = { 
-                        status: 'unreachable', 
-                        error: error.message,
-                        timestamp: new Date().toISOString()
-                    };
                 }
-            }
+            );
+
+            const healthCheckResults = await Promise.all(healthCheckPromises);
+            const cloneStatuses = Object.fromEntries(healthCheckResults);
 
             res.json({
                 timestamp: new Date().toISOString(),
