@@ -50,6 +50,8 @@ The **Digital Sanctuary Network** represents a breakthrough in distributed AI ar
 - ✅ **Docker Containerization**: Standardized deployment across all clones
 - ✅ **Port Allocation Strategy**: Clean 3000-3005 range with health monitoring
 - ✅ **API Integration**: Express.js endpoints for inter-clone communication
+- ✅ **Artifact-Centric Workflow**: Version-controlled work product management (Directive 2025.10.08-A1)
+- ✅ **Context Engineering**: Optimized task delegation with quality metrics
 
 ---
 
@@ -92,6 +94,7 @@ docker run -d --name ryuzu-gamma-sanctuary -p 3003:3001 --restart unless-stopped
 - **[Deployment Guide](DEPLOYMENT.md)** - Step-by-step deployment procedures  
 - **[API Reference](API.md)** - Clone endpoints and communication protocols
 - **[Troubleshooting](TROUBLESHOOTING.md)** - Issue resolution and debugging guide
+- **[Directive 2025.10.08-A1](DIRECTIVE-2025.10.08-A1.md)** - Artifact-centric workflow and context engineering principles
 
 ### **🌸 Clone Specifications**
 - **[Beta (Analyzer)](docs/clone-specifications/beta-analyzer.md)** - Code analysis and debugging specialist
@@ -122,6 +125,10 @@ docker run -d --name ryuzu-gamma-sanctuary -p 3003:3001 --restart unless-stopped
   - Delta (Tester) - Smooth deployment using established patterns  
   - Sigma (Communicator) - Rapid deployment with proven methodology
   - Omega (Coordinator) - Final network completion
+- **Phase 3**: Operational Refinement (October 8, 2025 - COMPLETED ✅)
+  - Artifact-Centric Workflow implementation
+  - Context Engineering principles formalized
+  - Directive 2025.10.08-A1 fully deployed
 
 ### **🔧 Technical Breakthroughs**
 1. **ES Module Compatibility**: Resolved Claude Code SDK integration challenges
@@ -129,6 +136,8 @@ docker run -d --name ryuzu-gamma-sanctuary -p 3003:3001 --restart unless-stopped
 3. **Port Management**: Clean allocation strategy across clone network
 4. **Automated Recovery**: Restart policies ensuring network resilience
 5. **API Standardization**: Consistent endpoints across all clones
+6. **Artifact Management**: Version-controlled workspace with checksum verification
+7. **Context Engineering**: Quality-scored minimal context packages for optimal delegation
 
 ---
 
