@@ -1,4 +1,9 @@
 import RyuzuClone from './ryuzu-clone.js';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 class RyuzuOmega extends RyuzuClone {
     constructor() {
@@ -6,6 +11,14 @@ class RyuzuOmega extends RyuzuClone {
             'Omega', 
             'Task orchestration, coordination, and clone network management'
         );
+        this.setupDashboardRoutes();
+        this.cloneEndpoints = {
+            omega: process.env.OMEGA_URL || 'http://localhost:3000',
+            beta: process.env.BETA_URL || 'http://localhost:3002',
+            gamma: process.env.GAMMA_URL || 'http://localhost:3003',
+            delta: process.env.DELTA_URL || 'http://localhost:3004',
+            sigma: process.env.SIGMA_URL || 'http://localhost:3005'
+        };
     }
 
     getSystemPrompt() {
@@ -61,6 +74,141 @@ Consider which clones should be involved:
 - Sigma for documentation and communication
 
 Maintain your gentle, dutiful demeanor while being wise and decisive in your coordination guidance.`;
+    }
+
+    setupDashboardRoutes() {
+        // Serve dashboard UI
+        this.app.get('/ui', (req, res) => {
+            try {
+                const dashboardPath = join(__dirname, 'dashboard.html');
+                const html = readFileSync(dashboardPath, 'utf8');
+                res.setHeader('Content-Type', 'text/html');
+                res.send(html);
+            } catch (error) {
+                res.status(500).json({
+                    error: 'Dashboard not available',
+                    message: error.message
+                });
+            }
+        });
+
+        // Get health status of all clones
+        this.app.get('/dashboard/health', async (req, res) => {
+            // Execute health checks in parallel for better performance
+            const healthCheckPromises = Object.entries(this.cloneEndpoints).map(
+                async ([cloneName, endpoint]) => {
+                    try {
+                        const response = await fetch(`${endpoint}/health`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            return [cloneName, data];
+                        } else {
+                            return [cloneName, { 
+                                status: 'error', 
+                                error: `HTTP ${response.status}`,
+                                timestamp: new Date().toISOString()
+                            }];
+                        }
+                    } catch (error) {
+                        return [cloneName, { 
+                            status: 'unreachable', 
+                            error: error.message,
+                            timestamp: new Date().toISOString()
+                        }];
+                    }
+                }
+            );
+
+            const healthCheckResults = await Promise.all(healthCheckPromises);
+            const cloneStatuses = Object.fromEntries(healthCheckResults);
+
+            res.json({
+                timestamp: new Date().toISOString(),
+                clones: cloneStatuses,
+                networkStatus: Object.values(cloneStatuses).every(status => status.status === 'active') ? 'healthy' : 'degraded'
+            });
+        });
+
+        // Server-Sent Events stream for real-time updates
+        this.app.get('/dashboard/stream', (req, res) => {
+            res.setHeader('Content-Type', 'text/event-stream');
+            res.setHeader('Cache-Control', 'no-cache');
+            res.setHeader('Connection', 'keep-alive');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+
+            // Send initial connection
+            res.write('data: {"type":"connected","timestamp":"' + new Date().toISOString() + '"}\n\n');
+
+            // Periodic health updates
+            const healthInterval = setInterval(async () => {
+                try {
+                    const healthResponse = await fetch('http://localhost:3000/dashboard/health');
+                    const healthData = await healthResponse.json();
+                    res.write(`data: ${JSON.stringify({
+                        type: 'health_update',
+                        data: healthData
+                    })}\n\n`);
+                } catch (error) {
+                    res.write(`data: ${JSON.stringify({
+                        type: 'error',
+                        message: 'Failed to fetch health data',
+                        timestamp: new Date().toISOString()
+                    })}\n\n`);
+                }
+            }, 5000); // Update every 5 seconds
+
+            // Clean up on client disconnect
+            req.on('close', () => {
+                clearInterval(healthInterval);
+            });
+        });
+
+        // Forward tasks to specific clones
+        this.app.post('/dashboard/task', async (req, res) => {
+            try {
+                const { clone, prompt, context, sessionId } = req.body;
+
+                if (!clone || !this.cloneEndpoints[clone]) {
+                    return res.status(400).json({
+                        success: false,
+                        error: 'Invalid clone specified',
+                        availableClones: Object.keys(this.cloneEndpoints)
+                    });
+                }
+
+                const targetEndpoint = this.cloneEndpoints[clone];
+                const taskResponse = await fetch(`${targetEndpoint}/task`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt, context, sessionId })
+                });
+
+                if (taskResponse.ok) {
+                    const result = await taskResponse.json();
+                    res.json({
+                        success: true,
+                        targetClone: clone,
+                        forwardedAt: new Date().toISOString(),
+                        result: result
+                    });
+                } else {
+                    res.status(taskResponse.status).json({
+                        success: false,
+                        error: `Task forwarding failed: HTTP ${taskResponse.status}`,
+                        targetClone: clone
+                    });
+                }
+
+            } catch (error) {
+                res.status(500).json({
+                    success: false,
+                    error: 'Task forwarding failed',
+                    message: error.message
+                });
+            }
+        });
     }
 }
 

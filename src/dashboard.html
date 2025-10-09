@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏰 Digital Sanctuary Network - Clone Monitoring Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f3e8ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            color: #374151;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            color: #6b46c1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: #7c3aed;
+            margin-bottom: 1rem;
+        }
+        
+        .network-status {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-healthy { background: #10b981; }
+        .status-degraded { background: #f59e0b; }
+        .status-error { background: #ef4444; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .clone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .clone-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        
+        .clone-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .clone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .clone-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #374151;
+        }
+        
+        .clone-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .clone-info {
+            margin-bottom: 1rem;
+        }
+        
+        .clone-specialization {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .clone-details {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+        
+        .clone-error {
+            color: #dc2626;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+        
+        .send-task-btn {
+            width: 100%;
+            background: #7c3aed;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .send-task-btn:hover {
+            background: #6d28d9;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: #374151;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+        
+        .btn-primary {
+            background: #7c3aed;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #6d28d9;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .task-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .task-result h4 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        
+        .task-result-success {
+            color: #065f46;
+        }
+        
+        .task-result-error {
+            color: #991b1b;
+        }
+        
+        .task-result pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .last-update {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🏰 Digital Sanctuary Network</h1>
+            <p>Real-time Monitoring Dashboard for Ryuzu Clone Network</p>
+            <div class="network-status">
+                <div class="status-indicator">
+                    <div id="networkStatusDot" class="status-dot status-error"></div>
+                    <span id="networkStatusText">UNKNOWN</span>
+                </div>
+                <div class="last-update">
+                    Last Update: <span id="lastUpdate">Never</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Clone Status Grid -->
+        <div id="cloneGrid" class="clone-grid">
+            <div class="loading">Loading clone status...</div>
+        </div>
+
+        <!-- Task Modal -->
+        <div id="taskModal" class="modal">
+            <div class="modal-content">
+                <h3 class="modal-header">Send Task to <span id="taskModalClone">Clone</span></h3>
+                
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label class="form-label">Task Prompt</label>
+                        <textarea id="taskPrompt" class="form-input form-textarea" 
+                                placeholder="Describe the task you want to send to this clone..." 
+                                required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Context (Optional)</label>
+                        <input id="taskContext" type="text" class="form-input" 
+                               placeholder="Additional context for the task...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Session ID (Optional)</label>
+                        <input id="taskSessionId" type="text" class="form-input" 
+                               placeholder="Session identifier for conversation continuity...">
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeTaskModal()">
+                            Cancel
+                        </button>
+                        <button type="submit" id="sendTaskBtn" class="btn btn-primary">
+                            Send Task
+                        </button>
+                    </div>
+                    
+                    <div id="taskResult" class="task-result hidden">
+                        <h4>Task Result:</h4>
+                        <div id="taskResultContent"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dashboard state
+        let clones = {};
+        let selectedClone = null;
+        let eventSource = null;
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchHealth();
+            setupEventStream();
+            setupTaskForm();
+            
+            // Fallback polling if SSE fails
+            setInterval(() => {
+                if (!eventSource || eventSource.readyState !== EventSource.OPEN) {
+                    fetchHealth();
+                }
+            }, 10000);
+        });
+        
+        // Fetch health status
+        async function fetchHealth() {
+            try {
+                const response = await fetch('/dashboard/health');
+                const data = await response.json();
+                updateCloneStatus(data);
+            } catch (error) {
+                console.error('Failed to fetch health:', error);
+                updateNetworkStatus('error', 'Error');
+            }
+        }
+        
+        // Setup Server-Sent Events
+        function setupEventStream() {
+            eventSource = new EventSource('/dashboard/stream');
+            
+            eventSource.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.type === 'health_update') {
+                        updateCloneStatus(data.data);
+                    }
+                } catch (error) {
+                    console.error('Failed to parse SSE data:', error);
+                }
+            };
+            
+            eventSource.onerror = function(error) {
+                console.error('SSE connection error:', error);
+            };
+        }
+        
+        // Update clone status display
+        function updateCloneStatus(data) {
+            clones = data.clones;
+            updateNetworkStatus(data.networkStatus, data.networkStatus.toUpperCase());
+            updateLastUpdate(data.timestamp);
+            renderCloneGrid();
+        }
+        
+        // Update network status indicator
+        function updateNetworkStatus(status, text) {
+            const dot = document.getElementById('networkStatusDot');
+            const textEl = document.getElementById('networkStatusText');
+            
+            dot.className = 'status-dot status-' + status;
+            textEl.textContent = text;
+        }
+        
+        // Update last update time
+        function updateLastUpdate(timestamp) {
+            const element = document.getElementById('lastUpdate');
+            element.textContent = new Date(timestamp).toLocaleTimeString();
+        }
+        
+        // Render clone grid
+        function renderCloneGrid() {
+            const grid = document.getElementById('cloneGrid');
+            grid.innerHTML = '';
+            
+            const cloneOrder = ['omega', 'beta', 'gamma', 'delta', 'sigma'];
+            
+            cloneOrder.forEach(cloneName => {
+                const clone = clones[cloneName];
+                const card = createCloneCard(cloneName, clone);
+                grid.appendChild(card);
+            });
+        }
+        
+        // Create clone card element
+        function createCloneCard(cloneName, clone) {
+            const card = document.createElement('div');
+            card.className = 'clone-card';
+            card.onclick = () => openTaskModal(cloneName);
+            
+            const statusClass = getStatusClass(clone);
+            const statusText = getStatusText(clone);
+            const specialization = getCloneSpecialization(cloneName);
+            
+            card.innerHTML = `
+                <div class="clone-header">
+                    <div class="clone-title">Ryuzu ${capitalize(cloneName)}</div>
+                    <div class="clone-status">
+                        <div class="status-dot ${statusClass}"></div>
+                        <span style="color: ${getStatusTextColor(clone)}">${statusText}</span>
+                    </div>
+                </div>
+                <div class="clone-info">
+                    <div class="clone-specialization">${specialization}</div>
+                    <div class="clone-details">
+                        ${clone && clone.timestamp ? 'Last seen: ' + new Date(clone.timestamp).toLocaleTimeString() : 'No recent activity'}
+                        ${clone && clone.error ? '<div class="clone-error">Error: ' + escapeHtml(clone.error) + '</div>' : ''}
+                    </div>
+                </div>
+                <button class="send-task-btn" onclick="event.stopPropagation(); openTaskModal('${cloneName}')">
+                    Send Task
+                </button>
+            `;
+            
+            return card;
+        }
+        
+        // Get status CSS class
+        function getStatusClass(clone) {
+            if (!clone) return 'status-error';
+            
+            switch (clone.status) {
+                case 'active': return 'status-healthy';
+                case 'error': return 'status-degraded';
+                case 'unreachable': return 'status-error';
+                default: return 'status-error';
+            }
+        }
+        
+        // Get status text color
+        function getStatusTextColor(clone) {
+            if (!clone) return '#6b7280';
+            
+            switch (clone.status) {
+                case 'active': return '#059669';
+                case 'error': return '#d97706';
+                case 'unreachable': return '#dc2626';
+                default: return '#6b7280';
+            }
+        }
+        
+        // Get status text
+        function getStatusText(clone) {
+            if (!clone) return 'UNKNOWN';
+            return (clone.status || 'unknown').toUpperCase();
+        }
+        
+        // Get clone specialization
+        function getCloneSpecialization(cloneName) {
+            const specializations = {
+                omega: 'Task orchestration, coordination, and clone network management',
+                beta: 'Code analysis, debugging, security review',
+                gamma: 'System design, architecture planning',
+                delta: 'Quality assurance, testing, validation',
+                sigma: 'Documentation, user interaction, communication'
+            };
+            return specializations[cloneName] || 'Specialized AI assistant';
+        }
+        
+        // Utility function to capitalize first letter
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        
+        // Utility function to escape HTML to prevent XSS
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+        
+        // Open task modal
+        function openTaskModal(cloneName) {
+            selectedClone = cloneName;
+            document.getElementById('taskModalClone').textContent = 'Ryuzu ' + capitalize(cloneName);
+            document.getElementById('taskModal').classList.add('show');
+            
+            // Reset form
+            document.getElementById('taskForm').reset();
+            document.getElementById('taskResult').classList.add('hidden');
+        }
+        
+        // Close task modal
+        function closeTaskModal() {
+            document.getElementById('taskModal').classList.remove('show');
+            selectedClone = null;
+        }
+        
+        // Setup task form
+        function setupTaskForm() {
+            document.getElementById('taskForm').onsubmit = async function(e) {
+                e.preventDefault();
+                await sendTask();
+            };
+        }
+        
+        // Send task to clone
+        async function sendTask() {
+            const prompt = document.getElementById('taskPrompt').value.trim();
+            if (!prompt) return;
+            
+            const sendBtn = document.getElementById('sendTaskBtn');
+            const resultDiv = document.getElementById('taskResult');
+            const resultContent = document.getElementById('taskResultContent');
+            
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Sending...';
+            resultDiv.classList.add('hidden');
+            
+            try {
+                const response = await fetch('/dashboard/task', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        clone: selectedClone,
+                        prompt: prompt,
+                        context: document.getElementById('taskContext').value,
+                        sessionId: document.getElementById('taskSessionId').value
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Create pre element safely to prevent XSS
+                const pre = document.createElement('pre');
+                pre.className = result.success ? 'task-result-success' : 'task-result-error';
+                pre.textContent = JSON.stringify(result, null, 2);
+                resultContent.innerHTML = '';
+                resultContent.appendChild(pre);
+                resultDiv.classList.remove('hidden');
+                
+            } catch (error) {
+                // Create pre element safely to prevent XSS
+                const pre = document.createElement('pre');
+                pre.className = 'task-result-error';
+                pre.textContent = `Network error: ${error.message}`;
+                resultContent.innerHTML = '';
+                resultContent.appendChild(pre);
+                resultDiv.classList.remove('hidden');
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send Task';
+            }
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('taskModal').onclick = function(e) {
+            if (e.target === this) {
+                closeTaskModal();
+            }
+        };
+    </script>
+</body>
+</html>
