@@ -474,7 +474,7 @@
                     <div class="clone-specialization">${specialization}</div>
                     <div class="clone-details">
                         ${clone && clone.timestamp ? 'Last seen: ' + new Date(clone.timestamp).toLocaleTimeString() : 'No recent activity'}
-                        ${clone && clone.error ? '<div class="clone-error">Error: ' + clone.error + '</div>' : ''}
+                        ${clone && clone.error ? '<div class="clone-error">Error: ' + escapeHtml(clone.error) + '</div>' : ''}
                     </div>
                 </div>
                 <button class="send-task-btn" onclick="event.stopPropagation(); openTaskModal('${cloneName}')">
@@ -532,6 +532,13 @@
             return str.charAt(0).toUpperCase() + str.slice(1);
         }
         
+        // Utility function to escape HTML to prevent XSS
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+        
         // Open task modal
         function openTaskModal(cloneName) {
             selectedClone = cloneName;
@@ -586,11 +593,21 @@
                 
                 const result = await response.json();
                 
-                resultContent.innerHTML = `<pre class="${result.success ? 'task-result-success' : 'task-result-error'}">${JSON.stringify(result, null, 2)}</pre>`;
+                // Create pre element safely to prevent XSS
+                const pre = document.createElement('pre');
+                pre.className = result.success ? 'task-result-success' : 'task-result-error';
+                pre.textContent = JSON.stringify(result, null, 2);
+                resultContent.innerHTML = '';
+                resultContent.appendChild(pre);
                 resultDiv.classList.remove('hidden');
                 
             } catch (error) {
-                resultContent.innerHTML = `<pre class="task-result-error">Network error: ${error.message}</pre>`;
+                // Create pre element safely to prevent XSS
+                const pre = document.createElement('pre');
+                pre.className = 'task-result-error';
+                pre.textContent = `Network error: ${error.message}`;
+                resultContent.innerHTML = '';
+                resultContent.appendChild(pre);
                 resultDiv.classList.remove('hidden');
             } finally {
                 sendBtn.disabled = false;
