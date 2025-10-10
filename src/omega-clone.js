@@ -1,4 +1,5 @@
 import RyuzuClone from './ryuzu-clone.js';
+import ContextEngineer from './context-engineer.js';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -11,6 +12,7 @@ class RyuzuOmega extends RyuzuClone {
             'Omega', 
             'Task orchestration, coordination, and clone network management'
         );
+        this.contextEngineer = new ContextEngineer();
         this.setupDashboardRoutes();
         this.cloneEndpoints = {
             omega: process.env.OMEGA_URL || 'http://localhost:3000',
@@ -33,6 +35,8 @@ Your expertise includes:
 - Progress monitoring and status reporting
 - Conflict resolution and decision making
 - Strategic planning and execution oversight
+- Artifact-centric workflow management (Directive 2025.10.08-A1)
+- Context engineering for optimal task delegation
 
 Your network includes:
 - Beta: Code analysis, debugging, security review
@@ -48,6 +52,8 @@ You should:
 - Ensure efficient resource utilization
 - Maintain overall project coherence and quality
 - Facilitate communication between all sanctuary members
+- Construct context packages with minimal, high-relevance information
+- Manage artifacts through centralized workspace with manifests
 
 Always maintain the gentle, dutiful nature of Ryuzu Meyer while being wise and decisive in your coordination role.`;
     }
@@ -163,10 +169,10 @@ Maintain your gentle, dutiful demeanor while being wise and decisive in your coo
             });
         });
 
-        // Forward tasks to specific clones
+        // Forward tasks to specific clones (with context engineering support)
         this.app.post('/dashboard/task', async (req, res) => {
             try {
-                const { clone, prompt, context, sessionId } = req.body;
+                const { clone, prompt, context, sessionId, useContextEngineering } = req.body;
 
                 if (!clone || !this.cloneEndpoints[clone]) {
                     return res.status(400).json({
@@ -177,12 +183,47 @@ Maintain your gentle, dutiful demeanor while being wise and decisive in your coo
                 }
 
                 const targetEndpoint = this.cloneEndpoints[clone];
+                
+                // Apply context engineering if requested
+                let taskPayload = { prompt, context, sessionId };
+                
+                if (useContextEngineering && context) {
+                    // Parse context if it's a string, otherwise use as-is
+                    let contextData = context;
+                    if (typeof context === 'string') {
+                        try {
+                            contextData = JSON.parse(context);
+                        } catch {
+                            contextData = { description: context };
+                        }
+                    }
+                    
+                    // Construct engineered context package
+                    const contextPackage = this.contextEngineer.constructContextPackage({
+                        objective: prompt,
+                        targetClone: clone,
+                        artifactManifests: contextData.artifactManifests || [],
+                        essentialData: contextData.essentialData || contextData,
+                        constraints: contextData.constraints || [],
+                        metadata: {
+                            constructedBy: 'Omega',
+                            orchestratedTask: true
+                        }
+                    });
+                    
+                    taskPayload = {
+                        prompt,
+                        sessionId,
+                        contextPackage
+                    };
+                }
+                
                 const taskResponse = await fetch(`${targetEndpoint}/task`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ prompt, context, sessionId })
+                    body: JSON.stringify(taskPayload)
                 });
 
                 if (taskResponse.ok) {
@@ -191,6 +232,7 @@ Maintain your gentle, dutiful demeanor while being wise and decisive in your coo
                         success: true,
                         targetClone: clone,
                         forwardedAt: new Date().toISOString(),
+                        contextEngineered: !!useContextEngineering,
                         result: result
                     });
                 } else {
@@ -205,6 +247,124 @@ Maintain your gentle, dutiful demeanor while being wise and decisive in your coo
                 res.status(500).json({
                     success: false,
                     error: 'Task forwarding failed',
+                    message: error.message
+                });
+            }
+        });
+
+        // Context package construction endpoint
+        this.app.post('/context/engineer', async (req, res) => {
+            try {
+                const { objective, targetClone, artifactManifests, essentialData, constraints, metadata } = req.body;
+                
+                const contextPackage = this.contextEngineer.constructContextPackage({
+                    objective,
+                    targetClone,
+                    artifactManifests: artifactManifests || [],
+                    essentialData: essentialData || {},
+                    constraints: constraints || [],
+                    metadata: metadata || {}
+                });
+
+                const validation = this.contextEngineer.validateContextPackage(contextPackage);
+
+                res.json({
+                    success: true,
+                    contextPackage,
+                    validation,
+                    role: this.role
+                });
+            } catch (error) {
+                res.status(400).json({
+                    success: false,
+                    error: error.message,
+                    role: this.role
+                });
+            }
+        });
+
+        // Delegate task with context engineering (orchestration endpoint)
+        this.app.post('/orchestrate', async (req, res) => {
+            try {
+                const { 
+                    objective, 
+                    targetClone, 
+                    artifactManifests, 
+                    essentialData, 
+                    constraints,
+                    sessionId 
+                } = req.body;
+
+                if (!targetClone || !this.cloneEndpoints[targetClone]) {
+                    return res.status(400).json({
+                        success: false,
+                        error: 'Invalid target clone specified',
+                        availableClones: Object.keys(this.cloneEndpoints)
+                    });
+                }
+
+                // Construct context package
+                const contextPackage = this.contextEngineer.constructContextPackage({
+                    objective,
+                    targetClone,
+                    artifactManifests: artifactManifests || [],
+                    essentialData: essentialData || {},
+                    constraints: constraints || [],
+                    metadata: {
+                        constructedBy: 'Omega',
+                        orchestratedTask: true
+                    }
+                });
+
+                // Validate context package
+                const validation = this.contextEngineer.validateContextPackage(contextPackage);
+                if (!validation.valid) {
+                    return res.status(400).json({
+                        success: false,
+                        error: 'Invalid context package',
+                        validationErrors: validation.errors
+                    });
+                }
+
+                // Delegate to target clone
+                const targetEndpoint = this.cloneEndpoints[targetClone];
+                const taskResponse = await fetch(`${targetEndpoint}/task`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: objective,
+                        contextPackage,
+                        sessionId
+                    })
+                });
+
+                if (taskResponse.ok) {
+                    const result = await taskResponse.json();
+                    res.json({
+                        success: true,
+                        orchestrator: 'Omega',
+                        targetClone,
+                        contextPackage: {
+                            contextId: contextPackage.contextId,
+                            quality: contextPackage.quality
+                        },
+                        result,
+                        timestamp: new Date().toISOString()
+                    });
+                } else {
+                    res.status(taskResponse.status).json({
+                        success: false,
+                        error: `Task delegation failed: HTTP ${taskResponse.status}`,
+                        targetClone
+                    });
+                }
+
+            } catch (error) {
+                res.status(500).json({
+                    success: false,
+                    error: 'Orchestration failed',
                     message: error.message
                 });
             }
