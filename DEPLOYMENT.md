@@ -355,6 +355,7 @@ For remote deployments:
 
 #### **Validation Script**
 ```bash
+# From repository root
 cd mcp-server
 ./validate-setup.sh
 ```
@@ -368,6 +369,7 @@ This script checks:
 
 #### **Integration Testing**
 ```bash
+# From repository root
 cd mcp-server
 ./test-integration.sh
 ```
