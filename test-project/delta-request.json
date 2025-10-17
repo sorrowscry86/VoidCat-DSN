@@ -1,0 +1,5 @@
+{
+  "prompt": "Develop a comprehensive testing strategy for a Task Management Web Application. Design test cases and quality assurance procedures.",
+  "context": "Task management application with user authentication, CRUD operations, responsive design, and API endpoints. Create unit test plans, integration test strategies, API testing procedures, UI/UX testing approaches, and performance testing guidelines.",
+  "sessionId": "test-project-delta-testing-001"
+}

@@ -1,0 +1,15 @@
+{
+  "project": "Task Management Web Application",
+  "description": "A simple CRUD task manager to demonstrate clone network coordination",
+  "requirements": [
+    "Basic task CRUD operations",
+    "User authentication", 
+    "Responsive web design",
+    "API endpoints for mobile access",
+    "Comprehensive testing",
+    "Complete documentation"
+  ],
+  "scope": "Small demonstration project (< 1 day development)",
+  "priority": "Medium",
+  "clones_needed": ["gamma", "beta", "delta", "sigma"]
+}

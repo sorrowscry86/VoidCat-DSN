@@ -78,6 +78,39 @@ docker run -d --name ryuzu-gamma-sanctuary -p 3003:3001 --restart unless-stopped
 - **Port Mapping**: External port varies, internal always `:3001`
 - **Health Check**: Required curl command for proper orchestration
 
+## 🎯 Project Orchestration Workflows
+
+### Optimal Project Flow
+1. **Initiation**: Requirements → Omega (coordination planning)
+2. **Design**: Gamma leads with Beta support (architecture + analysis)
+3. **Implementation**: Distributed per clone expertise
+4. **Testing**: Delta with multi-clone support (validation)
+5. **Documentation**: Sigma throughout process (continuous docs)
+6. **Delivery**: Omega consolidates outputs (final integration)
+
+### Clone Communication Protocols
+```javascript
+// Standard message format for inter-clone communication
+{
+  "from": "omega",
+  "to": "beta", 
+  "timestamp": "2025-07-16T10:30:00Z",
+  "message_type": "task_assignment",
+  "payload": {
+    "task_id": "TASK-001",
+    "description": "Analyze user behavior patterns",
+    "priority": "high",
+    "deadline": "2025-07-17T18:00:00Z"
+  }
+}
+```
+
+### Project Size Guidelines
+- **Small** (< 1 day): Single clone + direct coordination
+- **Medium** (1-5 days): 2-3 clones with Omega oversight
+- **Large** (1-2 weeks): Full network deployment
+- **Massive** (> 2 weeks): Network + potential temporary specialized clones
+
 ## 🎯 Clone Specializations
 
 | Clone | Port | Focus | Key Methods |
@@ -166,6 +199,32 @@ docker run -d --name ryuzu-gamma-sanctuary -p 3003:3001 --restart unless-stopped
 - **Direct HTTP**: Clones can call each other's `/task` endpoints
 - **Omega Coordination**: Use for complex multi-clone workflows
 - **Session Persistence**: Maintain `sessionId` across clone interactions
+
+### Clone Operation Patterns
+- **Sequential Processing**: Tasks with dependencies (Gamma → Beta → Delta → Sigma)
+- **Parallel Processing**: Independent tasks executed simultaneously
+- **Iterative Cycles**: Agile development with feedback loops
+- **Specialized Focus**: Expert-heavy tasks with single clone lead + consultation
+
+### Task Delegation Framework
+```javascript
+// Task Analysis Matrix - Use for optimal clone assignment
+const taskDelegation = {
+  'New Feature Design': { primary: 'gamma', support: ['beta', 'delta'] },
+  'Bug Investigation': { primary: 'beta', support: ['delta', 'gamma'] },
+  'Documentation': { primary: 'sigma', support: ['all'] },
+  'Security Audit': { primary: 'delta', support: ['beta', 'gamma'] },
+  'Performance Optimization': { primary: 'beta', support: ['gamma', 'delta'] },
+  'User Experience': { primary: 'sigma', support: ['gamma', 'beta'] },
+  'Integration': { primary: 'omega', support: ['all'] }
+};
+
+// Priority levels affect clone availability
+// Critical: All clones aware, Omega actively monitoring
+// High: Primary clone + one support
+// Medium: Primary clone with on-demand support
+// Low: Single clone, async updates
+```
 
 ### Real Inter-Clone Communication Examples
 
@@ -284,12 +343,20 @@ const testingResponse = await fetch('http://localhost:3004/task', {
 ### Build Issues
 - **ES Module Errors**: Check package.json has `"type": "module"`
 - **Claude Code Import**: Ensure both global AND local installation
-- **Port Conflicts**: Use `netstat -tulpn | grep ":300[0-5]"` to check
+- **Port Conflicts**: Use `netstat -an | findstr ":300[0-5]"` to check (Windows) or `netstat -tulpn | grep ":300[0-5]"` (Linux)
 
 ### Runtime Issues  
 - **Health Check Failures**: Verify Express server listening on port 3001
 - **Clone Communication**: Test with curl before implementing complex workflows
 - **Container Restart**: Use `docker restart ryuzu-<clone>-sanctuary` for quick recovery
+
+### Emergency Protocols
+If multiple clones fail:
+1. Check Docker daemon status
+2. Verify port availability across range 3000-3005
+3. Restart clones in dependency order: Beta → Gamma → Delta → Sigma → Omega
+4. Use `scripts/health-check.sh` for systematic validation
+5. Review container logs: `docker logs ryuzu-<clone>-sanctuary --tail 50`
 
 ### Common Issues We Actually Resolved
 

@@ -1,0 +1,5 @@
+{
+  "prompt": "Design the system architecture for a Task Management Web Application. Focus on creating a scalable, secure, and maintainable architecture.",
+  "context": "Small demonstration project for clone network coordination. Requirements: CRUD operations for tasks, user authentication, responsive design, API endpoints, testing capabilities. Recommend appropriate tech stack and architectural patterns.",
+  "sessionId": "test-project-gamma-architecture-001"
+}

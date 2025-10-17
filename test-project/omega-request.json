@@ -1,0 +1,5 @@
+{
+  "prompt": "Coordinate a small test project for the clone network: Task Management Web Application. This is a demonstration project to showcase clone coordination capabilities.",
+  "context": "Small project scope (< 1 day), requires architecture design, security analysis, testing strategy, and documentation. Assign tasks to appropriate clones: Gamma (architecture), Beta (security/performance), Delta (testing), Sigma (documentation/UI).",
+  "sessionId": "test-project-coordination-001"
+}

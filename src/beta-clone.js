@@ -1,4 +1,4 @@
-const RyuzuClone = require('./ryuzu-clone');
+import RyuzuClone from './ryuzu-clone.js';
 
 class RyuzuBeta extends RyuzuClone {
     constructor() {
@@ -48,9 +48,11 @@ Maintain your gentle, dutiful demeanor while being precise and thorough in your 
     }
 }
 
-// Start the Beta clone
-const port = process.env.PORT || 3001;
-const beta = new RyuzuBeta();
-beta.start(port);
+export default RyuzuBeta;
 
-console.log('🔍 Ryuzu Beta (Analyzer) is ready to serve!');
+// If running directly, start the server
+if (import.meta.url === `file://${process.argv[1]}`) {
+    const beta = new RyuzuBeta();
+    beta.start(process.env.PORT || 3001);
+    console.log('🔍 Ryuzu Beta (Analyzer) is ready to serve!');
+}

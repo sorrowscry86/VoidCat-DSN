@@ -20,11 +20,8 @@ COPY package.json ./
 # Install dependencies
 RUN npm install
 
-# Copy all sanctuary scripts and config
+# Copy all sanctuary scripts
 COPY *.js ./
-COPY *.md ./
-COPY .env.example ./
-COPY config/ ./config/
 
 # Set environment variables
 ENV NODE_ENV=production

@@ -1,0 +1,5 @@
+{
+  "prompt": "Based on the architecture design from Gamma clone, perform a detailed security analysis and identify potential vulnerabilities. Focus on the authentication system, API endpoints, and data protection measures.",
+  "context": "This is a follow-up task building on Gamma's architecture design. Please analyze the proposed system architecture for security weaknesses and provide specific remediation strategies. Reference session test-project-gamma-architecture-001 if possible.",
+  "sessionId": "test-project-beta-followup-001"
+}
