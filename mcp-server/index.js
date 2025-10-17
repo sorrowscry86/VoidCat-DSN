@@ -314,24 +314,28 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     switch (name) {
       case 'sanctuary_health_check': {
-        const healthResults = {};
-        
-        for (const [cloneName, endpoint] of Object.entries(CLONE_ENDPOINTS)) {
-          try {
-            const health = await callCloneEndpoint(cloneName, '/health');
-            healthResults[cloneName] = {
-              status: health.status,
-              role: health.role,
-              specialization: health.specialization,
-              timestamp: health.timestamp,
-            };
-          } catch (error) {
-            healthResults[cloneName] = {
-              status: 'unreachable',
-              error: error.message,
-            };
+        // Execute health checks in parallel for better performance
+        const healthCheckPromises = Object.entries(CLONE_ENDPOINTS).map(
+          async ([cloneName, endpoint]) => {
+            try {
+              const health = await callCloneEndpoint(cloneName, '/health');
+              return [cloneName, {
+                status: health.status,
+                role: health.role,
+                specialization: health.specialization,
+                timestamp: health.timestamp,
+              }];
+            } catch (error) {
+              return [cloneName, {
+                status: 'unreachable',
+                error: error.message,
+              }];
+            }
           }
-        }
+        );
+
+        const healthCheckResults = await Promise.all(healthCheckPromises);
+        const healthResults = Object.fromEntries(healthCheckResults);
 
         const allHealthy = Object.values(healthResults).every(
           result => result.status === 'active'
@@ -437,6 +441,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'sanctuary_get_artifact': {
+        // Validate artifactId to prevent path traversal attacks
+        const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (!UUID_REGEX.test(args.artifactId)) {
+          throw new Error('Invalid artifactId format. Must be a valid UUID.');
+        }
+
         const endpoint = `/artifacts/${args.artifactId}${args.manifestOnly ? '?manifestOnly=true' : ''}`;
         const result = await callCloneEndpoint(args.clone, endpoint, 'GET');
 
