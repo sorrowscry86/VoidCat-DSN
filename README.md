@@ -52,6 +52,7 @@ The **Digital Sanctuary Network** represents a breakthrough in distributed AI ar
 - ✅ **API Integration**: Express.js endpoints for inter-clone communication
 - ✅ **Artifact-Centric Workflow**: Version-controlled work product management (Directive 2025.10.08-A1)
 - ✅ **Context Engineering**: Optimized task delegation with quality metrics
+- ✅ **MCP Integration**: Seamless Claude Desktop/Code integration via Model Context Protocol
 
 ---
 
@@ -85,6 +86,35 @@ docker build -f Dockerfile.gamma -t ryuzu-gamma:latest ../src
 docker run -d --name ryuzu-gamma-sanctuary -p 3003:3001 --restart unless-stopped ryuzu-gamma:latest
 ```
 
+### **🔗 MCP Integration for Claude Desktop/Code**
+
+The Digital Sanctuary Network can be seamlessly integrated with Claude Desktop and Claude Code through the Model Context Protocol:
+
+```bash
+# Install MCP server dependencies
+cd mcp-server
+npm install
+
+# Configure Claude Desktop (see MCP Integration Guide for details)
+# Edit: ~/Library/Application Support/Claude/claude_desktop_config.json (macOS)
+#   or: %APPDATA%\Claude\claude_desktop_config.json (Windows)
+#   or: ~/.config/Claude/claude_desktop_config.json (Linux)
+
+# Restart Claude Desktop to load the sanctuary tools
+```
+
+**Available MCP Tools**:
+- 🏥 `sanctuary_health_check` - Monitor network status
+- 🔧 `sanctuary_beta_analyze` - Code analysis & security
+- 🏗️ `sanctuary_gamma_design` - Architecture & design
+- 🧪 `sanctuary_delta_test` - Testing & QA
+- 📚 `sanctuary_sigma_document` - Documentation
+- 👑 `sanctuary_omega_orchestrate` - Multi-clone coordination
+- ⚡ `sanctuary_omega_delegate` - Optimized task delegation
+- 💾 `sanctuary_store_artifact` / `sanctuary_get_artifact` - Artifact management
+
+For complete setup instructions, see the **[MCP Integration Guide](mcp-server/MCP-INTEGRATION-GUIDE.md)**.
+
 ---
 
 ## 📚 **Documentation Structure**
@@ -93,6 +123,7 @@ docker run -d --name ryuzu-gamma-sanctuary -p 3003:3001 --restart unless-stopped
 - **[Architecture Guide](ARCHITECTURE.md)** - Complete system design and clone network details
 - **[Deployment Guide](DEPLOYMENT.md)** - Step-by-step deployment procedures  
 - **[API Reference](API.md)** - Clone endpoints and communication protocols
+- **[MCP Integration Guide](mcp-server/MCP-INTEGRATION-GUIDE.md)** - Claude Desktop/Code integration via Model Context Protocol
 - **[Troubleshooting](TROUBLESHOOTING.md)** - Issue resolution and debugging guide
 - **[Directive 2025.10.08-A1](DIRECTIVE-2025.10.08-A1.md)** - Artifact-centric workflow and context engineering principles
 
@@ -138,20 +169,23 @@ docker run -d --name ryuzu-gamma-sanctuary -p 3003:3001 --restart unless-stopped
 5. **API Standardization**: Consistent endpoints across all clones
 6. **Artifact Management**: Version-controlled workspace with checksum verification
 7. **Context Engineering**: Quality-scored minimal context packages for optimal delegation
+8. **MCP Integration**: Model Context Protocol server for Claude Desktop/Code integration
 
 ---
 
 ## 🎯 **Future Roadmap**
 
-### **Phase 3: Advanced Coordination**
-- Inter-clone task delegation workflows
-- Complex project orchestration capabilities
+### **Phase 3: Advanced Coordination** ✅ **COMPLETED**
+- ✅ Inter-clone task delegation workflows
+- ✅ Complex project orchestration capabilities
+- ✅ MCP tool integration for seamless Claude Desktop/Code control
 - Advanced error handling and retry mechanisms
 
 ### **Phase 4: Integration Expansion**  
 - Integration with VoidCat RDC master project
 - Additional specialized clone roles
 - External system integration capabilities
+- Enhanced MCP tools for advanced workflows
 
 ---
 

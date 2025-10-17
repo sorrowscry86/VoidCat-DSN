@@ -1,0 +1,27 @@
+{
+  "name": "digital-sanctuary-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for VoidCat RDC Digital Sanctuary Network - Expose clone network capabilities to Claude Desktop/Code",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "sanctuary-mcp": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "ai",
+    "digital-sanctuary",
+    "ryuzu"
+  ],
+  "author": "VoidCat RDC",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.20.1"
+  }
+}
