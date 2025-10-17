@@ -424,54 +424,58 @@ If you've tried all solutions and still have issues:
 
 ---
 
-## ✅ **Quick Validation Script**
+## ✅ **Quick Validation**
 
-Save this as `validate-setup.sh`:
+Use the built-in validation script to check your setup:
 
 ```bash
-#!/bin/bash
-
-echo "🔍 Validating MCP Server Setup..."
-echo ""
-
-# Check Node.js
-if command -v node &> /dev/null; then
-    echo "✅ Node.js: $(node --version)"
-else
-    echo "❌ Node.js: Not found"
-    exit 1
-fi
-
-# Check dependencies
-if [ -d "node_modules" ]; then
-    echo "✅ Dependencies: Installed"
-else
-    echo "❌ Dependencies: Missing (run 'npm install')"
-    exit 1
-fi
-
-# Check index.js
-if [ -x "index.js" ]; then
-    echo "✅ index.js: Executable"
-else
-    echo "❌ index.js: Not executable (run 'chmod +x index.js')"
-fi
-
-# Check clone network
-echo ""
-echo "Checking clone network..."
-
-for port in 3000 3002 3003 3004 3005; do
-    if curl -s -f http://localhost:$port/health > /dev/null; then
-        echo "✅ Port $port: Active"
-    else
-        echo "❌ Port $port: Unreachable"
-    fi
-done
-
-echo ""
-echo "✅ Validation complete!"
+cd /path/to/VoidCat-DSN/mcp-server
+./validate-setup.sh
 ```
+
+This script automatically checks:
+- ✅ Node.js version (18+)
+- ✅ npm availability
+- ✅ MCP SDK dependencies installed
+- ✅ index.js executable permissions
+- ✅ package.json configuration
+- ✅ Clone network health (all 5 clones)
+- ✅ Claude Desktop configuration file
+- ✅ Configuration JSON validity
+
+**Example Output:**
+```
+🔍 Validating MCP Server Setup...
+
+Node.js: ✅ v20.19.5
+npm: ✅ 10.8.2
+Dependencies: ✅ Installed
+index.js: ✅ Exists and executable
+package.json: ✅ Valid (ES modules)
+
+Clone Network Status:
+  Omega (port 3000): ✅ Active
+  Beta (port 3002): ✅ Active
+  Gamma (port 3003): ✅ Active
+  Delta (port 3004): ✅ Active
+  Sigma (port 3005): ✅ Active
+
+Configuration:
+  Config location: ~/Library/Application Support/Claude/claude_desktop_config.json
+  Config file: ✅ Valid JSON
+  ✅ Digital Sanctuary configured
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ All 5 clones are healthy!
+
+✅ Validation Successful!
+
+The MCP server is ready for Claude Desktop integration.
+```
+
+**Validation Script Exit Codes:**
+- `0` - All checks passed, ready for use
+- `1` - Issues found, see output for details
 
 ---
 
