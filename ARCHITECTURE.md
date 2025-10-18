@@ -64,6 +64,13 @@ Host System                    Container Internal
 - **Start Period**: 5 second grace period
 - **Retries**: 3 attempts before marking unhealthy
 
+### **External Integration Layer**
+The network supports external access through the MCP (Model Context Protocol) server:
+- **MCP Server**: Bridges Claude Desktop/Code with the clone network
+- **Tool Exposure**: All clone capabilities available as standardized tools
+- **Unified Interface**: Single configuration point for external clients
+- **Documentation**: See [MCP Integration Guide](mcp-server/MCP-INTEGRATION-GUIDE.md)
+
 ## 🔗 **API Design**
 
 ### **Standard Endpoints**
@@ -236,6 +243,45 @@ const coordinationPlan = await omegaClone.coordinateTask({
 - **Dynamic Imports**: Runtime module loading capabilities
 - **Tree Shaking**: Optimized bundle sizes
 - **Claude Code Compatibility**: Native SDK integration
+
+### **MCP (Model Context Protocol) Integration**
+- **Standardized Tool Interface**: Exposes all clone capabilities as MCP tools
+- **Claude Desktop/Code Integration**: Seamless control from Claude interfaces
+- **Unified API Layer**: Single entry point for all clone interactions
+- **Artifact Management**: Persistent storage and retrieval of work products
+- **Context Engineering**: Optimized task delegation with quality metrics
+
+#### **MCP Server Architecture**
+The MCP server (`mcp-server/index.js`) acts as a bridge between Claude Desktop/Code and the Digital Sanctuary Network:
+
+```javascript
+// MCP server structure
+- StdioServerTransport for Claude communication
+- Tool definitions for each clone capability
+- HTTP client for clone API interaction
+- Artifact storage and retrieval system
+- Health monitoring and network status
+```
+
+#### **Available MCP Tools**
+| Tool | Purpose | Clone(s) |
+|------|---------|----------|
+| `sanctuary_health_check` | Monitor network status | All |
+| `sanctuary_beta_analyze` | Code analysis & security | Beta |
+| `sanctuary_gamma_design` | Architecture & design | Gamma |
+| `sanctuary_delta_test` | Testing & QA | Delta |
+| `sanctuary_sigma_document` | Documentation | Sigma |
+| `sanctuary_omega_orchestrate` | Multi-clone coordination | Omega |
+| `sanctuary_omega_delegate` | Optimized task delegation | Omega |
+| `sanctuary_store_artifact` | Store work products | Any |
+| `sanctuary_get_artifact` | Retrieve artifacts | Any |
+
+#### **MCP Communication Flow**
+1. **User Request** → Claude Desktop/Code interface
+2. **Tool Selection** → Claude determines appropriate sanctuary tool
+3. **MCP Server** → Processes tool invocation request
+4. **Clone API** → Routes to appropriate clone endpoint
+5. **Response** → Formatted result back to Claude interface
 
 ### **Configuration Management**
 - **Environment Variables**: Runtime configuration
