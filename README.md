@@ -88,32 +88,78 @@ docker run -d --name ryuzu-gamma-sanctuary -p 3003:3001 --restart unless-stopped
 
 ### **🔗 MCP Integration for Claude Desktop/Code**
 
-The Digital Sanctuary Network can be seamlessly integrated with Claude Desktop and Claude Code through the Model Context Protocol:
+The Digital Sanctuary Network provides seamless integration with Claude Desktop and Claude Code through the **Model Context Protocol (MCP)**, exposing all five clone capabilities as standardized tools.
 
+#### **Why Use MCP Integration?**
+- 🎯 **Effortless Access**: Control all clones directly from Claude Desktop
+- 🔧 **Standardized Tools**: 9 specialized tools for every use case
+- 📦 **Artifact Management**: Store and retrieve work products with version control
+- ⚡ **Optimized Delegation**: Context-engineered task routing for better results
+- 🏥 **Health Monitoring**: Real-time network status at your fingertips
+
+#### **Quick Setup**
 ```bash
 # Install MCP server dependencies
 cd mcp-server
 npm install
 
-# Configure Claude Desktop (see MCP Integration Guide for details)
+# Configure Claude Desktop
 # Edit: ~/Library/Application Support/Claude/claude_desktop_config.json (macOS)
 #   or: %APPDATA%\Claude\claude_desktop_config.json (Windows)
 #   or: ~/.config/Claude/claude_desktop_config.json (Linux)
 
+# Add to config:
+{
+  "mcpServers": {
+    "digital-sanctuary": {
+      "command": "node",
+      "args": ["/absolute/path/to/VoidCat-DSN/mcp-server/index.js"],
+      "env": {
+        "OMEGA_URL": "http://localhost:3000",
+        "BETA_URL": "http://localhost:3002",
+        "GAMMA_URL": "http://localhost:3003",
+        "DELTA_URL": "http://localhost:3004",
+        "SIGMA_URL": "http://localhost:3005"
+      }
+    }
+  }
+}
+
 # Restart Claude Desktop to load the sanctuary tools
 ```
 
-**Available MCP Tools**:
-- 🏥 `sanctuary_health_check` - Monitor network status
-- 🔧 `sanctuary_beta_analyze` - Code analysis & security
-- 🏗️ `sanctuary_gamma_design` - Architecture & design
-- 🧪 `sanctuary_delta_test` - Testing & QA
-- 📚 `sanctuary_sigma_document` - Documentation
-- 👑 `sanctuary_omega_orchestrate` - Multi-clone coordination
-- ⚡ `sanctuary_omega_delegate` - Optimized task delegation
-- 💾 `sanctuary_store_artifact` / `sanctuary_get_artifact` - Artifact management
+#### **Available MCP Tools**
+| Tool | Clone | Purpose |
+|------|-------|---------|
+| 🏥 `sanctuary_health_check` | All | Monitor network status |
+| 🔧 `sanctuary_beta_analyze` | Beta | Code analysis & security |
+| 🏗️ `sanctuary_gamma_design` | Gamma | Architecture & design |
+| 🧪 `sanctuary_delta_test` | Delta | Testing & QA |
+| 📚 `sanctuary_sigma_document` | Sigma | Documentation |
+| 👑 `sanctuary_omega_orchestrate` | Omega | Multi-clone coordination |
+| ⚡ `sanctuary_omega_delegate` | Omega | Optimized task delegation |
+| 💾 `sanctuary_store_artifact` | Any | Store work products |
+| 📥 `sanctuary_get_artifact` | Any | Retrieve artifacts |
 
-For complete setup instructions, see the **[MCP Integration Guide](mcp-server/MCP-INTEGRATION-GUIDE.md)**.
+#### **Example Usage in Claude Desktop**
+```
+You: Check the sanctuary health status
+
+Claude: [Uses sanctuary_health_check]
+All 5 clones are healthy and operational!
+
+You: Ask Gamma to design a real-time chat system for 100k users
+
+Claude: [Uses sanctuary_gamma_design]
+Gamma has designed a comprehensive microservices architecture...
+
+You: Store Gamma's design as an artifact
+
+Claude: [Uses sanctuary_store_artifact]
+Stored as artifact ID: 550e8400-e29b-41d4-a716-446655440000
+```
+
+For complete setup instructions and advanced usage, see the **[MCP Integration Guide](mcp-server/MCP-INTEGRATION-GUIDE.md)**.
 
 ---
 
