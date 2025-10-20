@@ -1,6 +1,13 @@
 import express from 'express';
 import { query } from '@anthropic-ai/claude-code';
 import ArtifactManager from './artifact-manager.js';
+import { 
+    TaskAssignment, 
+    TaskCompletion, 
+    TaskFailure,
+    StatusQuery,
+    StatusResponse
+} from './sanctuary-message-protocol.js';
 
 class RyuzuClone {
     constructor(role, specialization) {
@@ -8,7 +15,13 @@ class RyuzuClone {
         this.specialization = specialization;
         this.app = express();
         this.artifactManager = new ArtifactManager();
+        
+        // Phase 2: Orchestration support
+        this.activeTasks = new Map(); // Track active orchestrated tasks
+        this.orchestrationEnabled = true;
+        
         this.setupRoutes();
+        this.setupOrchestrationHandlers();
     }
 
     setupRoutes() {
@@ -129,6 +142,175 @@ class RyuzuClone {
                 });
             }
         });
+
+        // Phase 2: Orchestration endpoint
+        this.app.post('/orchestrate', async (req, res) => {
+            try {
+                const { messageType, message } = req.body;
+
+                if (!messageType || !message) {
+                    return res.status(400).json({
+                        success: false,
+                        error: 'messageType and message are required'
+                    });
+                }
+
+                let result;
+                switch (messageType) {
+                    case 'TaskAssignment':
+                        result = await this.handleTaskAssignment(message);
+                        break;
+                    case 'StatusQuery':
+                        result = await this.handleStatusQuery(message);
+                        break;
+                    default:
+                        return res.status(400).json({
+                            success: false,
+                            error: `Unknown message type: ${messageType}`
+                        });
+                }
+
+                res.json({
+                    success: true,
+                    role: this.role,
+                    result,
+                    timestamp: new Date().toISOString()
+                });
+
+            } catch (error) {
+                res.status(500).json({
+                    success: false,
+                    error: error.message,
+                    role: this.role
+                });
+            }
+        });
+    }
+
+    /**
+     * Setup orchestration handlers for AutoGen integration
+     * Phase 2: Clone Integration
+     */
+    setupOrchestrationHandlers() {
+        // Orchestration handlers are called via the /orchestrate endpoint
+        // This method can be overridden by subclasses for custom behavior
+    }
+
+    /**
+     * Handle task assignment from orchestrator
+     * @param {Object} taskMessage - TaskAssignment message
+     * @returns {Object} TaskCompletion or TaskFailure message
+     */
+    async handleTaskAssignment(taskMessage) {
+        const taskId = taskMessage.messageId || `task_${Date.now()}`;
+        const startTime = Date.now();
+
+        // Track active task
+        this.activeTasks.set(taskId, {
+            taskId,
+            description: taskMessage.taskDescription,
+            status: 'in-progress',
+            startTime,
+            fromClone: taskMessage.fromClone
+        });
+
+        try {
+            // Extract task parameters
+            const { taskDescription, parameters = {} } = taskMessage;
+            const prompt = parameters.prompt || taskDescription;
+            const context = parameters.context || '';
+
+            // Execute task using Claude Code
+            const messages = [];
+            const response = query({
+                prompt: this.enhancePrompt(prompt, context),
+                options: {
+                    maxTurns: 3,
+                    systemPrompt: this.getSystemPrompt(),
+                    outputFormat: 'json'
+                }
+            });
+
+            for await (const message of response) {
+                messages.push(message);
+            }
+
+            // Mark task as completed
+            const duration = Date.now() - startTime;
+            this.activeTasks.delete(taskId);
+
+            // Create TaskCompletion message
+            const completion = new TaskCompletion(
+                this.role,
+                taskMessage.fromClone,
+                taskMessage.messageId,
+                taskDescription,
+                {
+                    messages,
+                    executedBy: this.role,
+                    duration
+                }
+            );
+
+            return completion.toJSON();
+
+        } catch (error) {
+            // Mark task as failed
+            this.activeTasks.delete(taskId);
+
+            // Create TaskFailure message
+            const failure = new TaskFailure(
+                this.role,
+                taskMessage.fromClone,
+                taskMessage.messageId,
+                taskMessage.taskDescription,
+                error.message,
+                { errorType: error.name, stack: error.stack }
+            );
+
+            return failure.toJSON();
+        }
+    }
+
+    /**
+     * Handle status query from orchestrator
+     * @param {Object} statusMessage - StatusQuery message
+     * @returns {Object} StatusResponse message
+     */
+    async handleStatusQuery(statusMessage) {
+        const activeTasksList = Array.from(this.activeTasks.values());
+        
+        const response = new StatusResponse(
+            this.role,
+            statusMessage.fromClone,
+            statusMessage.messageId,
+            statusMessage.queryType || 'health'
+        );
+
+        // Populate cloneStatus
+        response.cloneStatus = {
+            role: this.role,
+            specialization: this.specialization,
+            health: 'healthy',
+            activeTasks: activeTasksList,
+            uptime: process.uptime(),
+            lastActivity: new Date().toISOString()
+        };
+
+        return response.toJSON();
+    }
+
+    /**
+     * Get current orchestration status
+     * @returns {Object} Status information
+     */
+    getOrchestrationStatus() {
+        return {
+            role: this.role,
+            orchestrationEnabled: this.orchestrationEnabled,
+            activeTasks: this.activeTasks.size,
+            activeTaskIds: Array.from(this.activeTasks.keys())
+        };
     }
 
     enhancePrompt(prompt, context) {
