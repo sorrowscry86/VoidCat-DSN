@@ -1,7 +1,7 @@
 {
   "name": "sanctuary-scripts",
-  "version": "3.1.0",
-  "description": "VoidCat RDC Digital Sanctuary Network - Phase 3 Complete",
+  "version": "4.0.0",
+  "description": "VoidCat RDC Digital Sanctuary Network - Phase 4 Documentation Complete",
   "main": "omega-clone.js",
   "scripts": {
     "test": "node run-all-tests.js",
