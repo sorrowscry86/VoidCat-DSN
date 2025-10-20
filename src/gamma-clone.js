@@ -49,6 +49,57 @@ Please provide a comprehensive architectural analysis including:
 
 Maintain your gentle, dutiful demeanor while being visionary and systematic in your architectural guidance.`;
     }
+
+    /**
+     * Execute task for orchestration support
+     * Implements specialized task handling for Gamma (Architecture)
+     * 
+     * @param {Object} taskData - Task data with requirements, context, etc.
+     * @returns {Promise<Object>} Design result
+     */
+    async executeTask(taskData) {
+        const { requirements, designType = 'system', context = '' } = taskData;
+
+        if (!requirements) {
+            throw new Error('Requirements are required for Gamma architecture design');
+        }
+
+        // Enhance prompt with Gamma specialization
+        const enhancedPrompt = this.enhancePrompt(
+            `Design a ${designType} architecture for the following requirements:\n${requirements}`,
+            context
+        );
+
+        // Execute using Claude Code SDK
+        const result = [];
+        try {
+            const response = this.query({
+                prompt: enhancedPrompt,
+                options: {
+                    systemPrompt: this.getSystemPrompt(),
+                    maxTurns: 3,
+                    outputFormat: 'json'
+                }
+            });
+
+            for await (const message of response) {
+                result.push(message);
+            }
+
+            return {
+                success: true,
+                designType,
+                result,
+                timestamp: new Date().toISOString()
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error.message,
+                timestamp: new Date().toISOString()
+            };
+        }
+    }
 }
 
 export default RyuzuGamma;

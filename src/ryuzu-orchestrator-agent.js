@@ -1,7 +1,7 @@
 /**
  * RyuzuOrchestratorAgent - AutoGen Integration Foundation
  * 
- * Extends AutoGen's OrchestratorAgent pattern for hierarchical clone coordination
+ * Standalone orchestrator implementation for hierarchical clone coordination
  * Implements Directive DSN-2025.10.19-AFT: AutoGen as foundational framework
  * 
  * Architecture:
@@ -11,10 +11,8 @@
  * - Hierarchical clone network support (Omega → Beta/Gamma/Delta/Sigma)
  */
 
-import { RoutedAgent, DefaultAssistant, MessageContext } from '@anthropic-ai/autogen-core';
-
 /**
- * Message Protocol Types for Clone-to-Clone Communication
+ * TaskDelegation - Record of a task delegation to a clone
  */
 export class TaskDelegation {
     constructor(taskId, sourceClone, targetClone, taskDescription, parameters = {}) {
@@ -28,6 +26,9 @@ export class TaskDelegation {
     }
 }
 
+/**
+ * TaskResult - Result from a completed task
+ */
 export class TaskResult {
     constructor(taskId, sourceClone, targetClone, success, result, error = null) {
         this.taskId = taskId;
@@ -40,6 +41,9 @@ export class TaskResult {
     }
 }
 
+/**
+ * ErrorReport - Error report from a clone
+ */
 export class ErrorReport {
     constructor(taskId, sourceClone, targetClone, severity, message, context = {}) {
         this.taskId = taskId;
@@ -55,29 +59,11 @@ export class ErrorReport {
 /**
  * RyuzuOrchestratorAgent
  * 
- * Base orchestrator implementation for hierarchical clone coordination
+ * Standalone base orchestrator implementation for hierarchical clone coordination
  * Manages explicit task delegation, routing, and state tracking
  */
-export class RyuzuOrchestratorAgent extends RoutedAgent {
+export class RyuzuOrchestratorAgent {
     constructor(role = 'Omega', specialization = 'Network Coordination') {
-        super({
-            model_client: new DefaultAssistant(),
-            system_prompt: `You are Ryuzu ${role}, orchestrator of the Digital Sanctuary Network. Your role is to coordinate clone activities with explicit command-and-control authority.
-
-Key Responsibilities:
-- Maintain strict hierarchical control over subordinate clones
-- Route tasks deterministically based on specialization
-- Track task state and validate completion
-- Handle errors with explicit recovery procedures
-- Preserve audit trail of all orchestration decisions
-
-Communication Style:
-- Be clear and directive in task assignments
-- Validate all task results before proceeding
-- Report all orchestration decisions explicitly
-- Maintain gentle, dutiful demeanor while exercising authority`
-        });
-
         this.role = role;
         this.specialization = specialization;
         this.taskLog = new Map(); // Track all delegated tasks

@@ -50,6 +50,57 @@ Please provide a comprehensive testing analysis including:
 
 Maintain your gentle, dutiful demeanor while being meticulous and thorough in your quality assurance guidance.`;
     }
+
+    /**
+     * Execute task for orchestration support
+     * Implements specialized task handling for Delta (Testing)
+     * 
+     * @param {Object} taskData - Task data with code, testType, etc.
+     * @returns {Promise<Object>} Testing strategy result
+     */
+    async executeTask(taskData) {
+        const { code, testType = 'strategy', context = '' } = taskData;
+
+        if (!code && testType === 'unit') {
+            throw new Error('Code is required for Delta testing');
+        }
+
+        // Enhance prompt with Delta specialization
+        const enhancedPrompt = this.enhancePrompt(
+            `Create a ${testType} testing strategy for:\n${code || context}`,
+            context
+        );
+
+        // Execute using Claude Code SDK
+        const result = [];
+        try {
+            const response = this.query({
+                prompt: enhancedPrompt,
+                options: {
+                    systemPrompt: this.getSystemPrompt(),
+                    maxTurns: 3,
+                    outputFormat: 'json'
+                }
+            });
+
+            for await (const message of response) {
+                result.push(message);
+            }
+
+            return {
+                success: true,
+                testType,
+                result,
+                timestamp: new Date().toISOString()
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error.message,
+                timestamp: new Date().toISOString()
+            };
+        }
+    }
 }
 
 export default RyuzuDelta;

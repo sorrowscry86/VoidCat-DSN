@@ -46,6 +46,57 @@ Please provide a thorough technical analysis including:
 
 Maintain your gentle, dutiful demeanor while being precise and thorough in your technical analysis.`;
     }
+
+    /**
+     * Execute task for orchestration support
+     * Implements specialized task handling for Beta (Code Analysis)
+     * 
+     * @param {Object} taskData - Task data with code, analysisType, etc.
+     * @returns {Promise<Object>} Analysis result
+     */
+    async executeTask(taskData) {
+        const { code, analysisType = 'general', context = '' } = taskData;
+
+        if (!code) {
+            throw new Error('Code is required for Beta analysis');
+        }
+
+        // Enhance prompt with Beta specialization
+        const enhancedPrompt = this.enhancePrompt(
+            `Perform ${analysisType} analysis on the following code:\n\`\`\`javascript\n${code}\n\`\`\``,
+            context
+        );
+
+        // Execute using Claude Code SDK
+        const result = [];
+        try {
+            const response = this.query({
+                prompt: enhancedPrompt,
+                options: {
+                    systemPrompt: this.getSystemPrompt(),
+                    maxTurns: 3,
+                    outputFormat: 'json'
+                }
+            });
+
+            for await (const message of response) {
+                result.push(message);
+            }
+
+            return {
+                success: true,
+                analysisType,
+                result,
+                timestamp: new Date().toISOString()
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error.message,
+                timestamp: new Date().toISOString()
+            };
+        }
+    }
 }
 
 export default RyuzuBeta;

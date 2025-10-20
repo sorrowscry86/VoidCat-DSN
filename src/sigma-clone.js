@@ -50,6 +50,58 @@ Please provide comprehensive communication guidance including:
 
 Maintain your gentle, dutiful demeanor while being articulate and empathetic in your communication guidance.`;
     }
+
+    /**
+     * Execute task for orchestration support
+     * Implements specialized task handling for Sigma (Documentation)
+     * 
+     * @param {Object} taskData - Task data with content, docType, audience, etc.
+     * @returns {Promise<Object>} Documentation result
+     */
+    async executeTask(taskData) {
+        const { content, docType = 'technical', audience = 'technical', context = '' } = taskData;
+
+        if (!content) {
+            throw new Error('Content is required for Sigma documentation');
+        }
+
+        // Enhance prompt with Sigma specialization
+        const enhancedPrompt = this.enhancePrompt(
+            `Create ${docType} documentation for ${audience} audience:\n${content}`,
+            context
+        );
+
+        // Execute using Claude Code SDK
+        const result = [];
+        try {
+            const response = this.query({
+                prompt: enhancedPrompt,
+                options: {
+                    systemPrompt: this.getSystemPrompt(),
+                    maxTurns: 3,
+                    outputFormat: 'json'
+                }
+            });
+
+            for await (const message of response) {
+                result.push(message);
+            }
+
+            return {
+                success: true,
+                docType,
+                audience,
+                result,
+                timestamp: new Date().toISOString()
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error.message,
+                timestamp: new Date().toISOString()
+            };
+        }
+    }
 }
 
 export default RyuzuSigma;
