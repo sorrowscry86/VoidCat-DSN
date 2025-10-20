@@ -1,5 +1,0 @@
-{
-  "prompt": "Review this JavaScript function for security vulnerabilities and best practices",
-  "context": "function validateUser(input) { return eval(input.userCode); }",
-  "sessionId": "test-beta-001"
-}

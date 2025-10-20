@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "digital-sanctuary": {
+      "command": "node",
+      "args": ["D:\\Development\\VoidCat-DSN\\mcp-server\\index.js"],
+      "env": {
+        "OMEGA_URL": "http://localhost:3000",
+        "BETA_URL": "http://localhost:3002",
+        "GAMMA_URL": "http://localhost:3003",
+        "DELTA_URL": "http://localhost:3004",
+        "SIGMA_URL": "http://localhost:3005",
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

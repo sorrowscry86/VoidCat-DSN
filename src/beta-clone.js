@@ -50,8 +50,11 @@ Maintain your gentle, dutiful demeanor while being precise and thorough in your 
 
 export default RyuzuBeta;
 
+import { fileURLToPath } from 'url';
+import path from 'path';
+
 // If running directly, start the server
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
     const beta = new RyuzuBeta();
     beta.start(process.env.PORT || 3001);
     console.log('🔍 Ryuzu Beta (Analyzer) is ready to serve!');

@@ -1,8 +1,8 @@
 dir
 D:
-Find "VoidCat-DSN"
+dir /s /b "VoidCat-DSN*"
 Pause
-Find "Sanctuary"
+Find "Sanctuary" <nul
 Date
 Ver
 color f0

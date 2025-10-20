@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat \"D:\\Development\\VoidCat-DSN\\START-HERE.md\")",
+      "Bash(npm install)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

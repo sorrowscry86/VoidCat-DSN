@@ -1,0 +1,65 @@
+# Research Data - Confidential Until Publication
+# This directory contains sensitive research data, performance metrics, and behavioral logs
+# Do not commit raw data files to public repositories until publication is ready
+
+# Data Files (Large, sensitive)
+data/**/*.json
+data/**/*.csv
+data/**/*.log
+data/**/*.db
+data/**/*.sqlite
+data/**/*.parquet
+performance/**/*.json
+performance/**/*.csv
+interactions/**/*.json
+interactions/**/*.log
+experiments/**/*.json
+experiments/**/*.log
+benchmarks/**/*.json
+benchmarks/**/*.csv
+
+# Analysis Output (Generated)
+tools/analysis/output/**/*.png
+tools/analysis/output/**/*.pdf
+tools/analysis/output/**/*.html
+analysis_output/
+
+# Sensitive Environment Files
+.env.research
+credentials.*
+api_keys.*
+
+# Research Notes (Local)
+personal_notes/
+draft_findings/
+
+# Temporary Files
+*.tmp
+*.temp
+*.swp
+*.bak
+
+# Processed Data (Can be regenerated)
+cache/
+processed_data/
+temp_analysis/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Keep template files and documentation
+!*.md
+!*.template.*
+!*.example.*
+!docs/
+!README.md
