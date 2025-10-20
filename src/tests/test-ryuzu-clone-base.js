@@ -255,7 +255,7 @@ console.log('\n📋 TEST SUITE 5: Orchestration Task Handling\n');
 
 await runTest('5.1: handleOrchestrationTask accepts valid task', async () => {
     const clone = new MockRyuzuClone('Beta', 'Code analysis');
-    const task = new TaskAssignment('omega', 'beta', 'security-analysis', 'Analyze code');
+    const task = new TaskAssignment('omega', 'beta', 'Analyze code', 'security-analysis');
     
     const result = await clone.handleOrchestrationTask(task);
     assert(result.acknowledged === true, 'Should acknowledge task');
@@ -264,7 +264,7 @@ await runTest('5.1: handleOrchestrationTask accepts valid task', async () => {
 
 await runTest('5.2: handleOrchestrationTask adds task to active tasks', async () => {
     const clone = new MockRyuzuClone('Gamma', 'Architecture');
-    const task = new TaskAssignment('omega', 'gamma', 'architecture-design', 'Design system');
+    const task = new TaskAssignment('omega', 'gamma', 'Design system', 'architecture-design');
     
     await clone.handleOrchestrationTask(task);
     assert(clone.activeTasks.size === 1, 'Should have one active task');
@@ -284,7 +284,7 @@ await runTest('5.3: handleOrchestrationTask validates task structure', async () 
 
 await runTest('5.4: handleOrchestrationTask tracks task details', async () => {
     const clone = new MockRyuzuClone('Sigma', 'Documentation');
-    const task = new TaskAssignment('omega', 'sigma', 'documentation', 'Document API');
+    const task = new TaskAssignment('omega', 'sigma', 'Document API', 'documentation');
     
     await clone.handleOrchestrationTask(task);
     const taskData = clone.activeTasks.get(task.messageId);
@@ -308,7 +308,7 @@ await runTest('6.1: handleStatusQuery returns clone status', async () => {
 
 await runTest('6.2: handleStatusQuery includes active task count', async () => {
     const clone = new MockRyuzuClone('Gamma', 'Architecture');
-    const task = new TaskAssignment('omega', 'gamma', 'test', 'test task');
+    const task = new TaskAssignment('omega', 'gamma', 'test task', 'test');
     await clone.handleOrchestrationTask(task);
     
     const query = new StatusQuery('omega', 'gamma', 'full');
