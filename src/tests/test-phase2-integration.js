@@ -32,7 +32,7 @@ import {
 } from '../routing-config.js';
 
 console.log('📋 PHASE 2 INTEGRATION TEST SUITE\n');
-console.log('=' .repeat(60));
+console.log('='.repeat(60));
 
 // Test Suite 1: Base Clone Orchestration Support
 console.log('\n📋 TEST SUITE 1: Base Clone Orchestration\n');
