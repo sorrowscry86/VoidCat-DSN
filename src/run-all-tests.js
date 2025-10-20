@@ -18,7 +18,8 @@ const testFiles = [
     './tests/test-artifact-manager.js',
     './tests/test-context-engineer.js',
     './tests/test-routing-config.js',
-    './tests/test-message-handlers.js'
+    './tests/test-message-handlers.js',
+    './tests/test-ryuzu-clone-base.js'
 ];
 
 const testResults = {
