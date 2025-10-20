@@ -89,8 +89,18 @@ export async function handleStatusQuery(message, clone) {
             clone.role,
             message.fromClone,
             message.messageId,
-            status
+            message.queryType || 'health'
         );
+
+        // Populate cloneStatus field
+        response.cloneStatus = {
+            role: clone.role,
+            specialization: clone.specialization,
+            health: 'healthy',
+            activeTasks: clone.activeTasks ? Array.from(clone.activeTasks.values()) : [],
+            uptime: process.uptime ? process.uptime() : null,
+            lastActivity: new Date().toISOString()
+        };
 
         console.log(`📊 ${clone.role} sending status: ${status.activeTasks} active tasks`);
 
