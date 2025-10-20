@@ -1,23 +1,30 @@
 {
   "name": "sanctuary-scripts",
-  "version": "1.0.0",
-  "description": "",
-  "main": "beta-clone.js",
+  "version": "3.1.0",
+  "description": "VoidCat RDC Digital Sanctuary Network - Phase 3 Complete",
+  "main": "omega-clone.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node run-all-tests.js",
+    "test:coverage": "c8 --reporter=html --reporter=text --reporter=lcov --all --src=. --exclude='tests/**' --exclude='node_modules/**' --exclude='dashboard.html' node run-all-tests.js",
+    "test:unit": "node run-all-tests.js",
+    "coverage:report": "c8 report",
+    "coverage:check": "c8 check-coverage --lines 90 --functions 90 --branches 85"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["ai", "distributed-system", "orchestration", "sanctuary", "ryuzu"],
+  "author": "VoidCat RDC - Sorrow Eternal",
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "express": "^4.18.2",
     "@anthropic-ai/claude-code": "^1.0.0",
     "axios": "^1.6.0",
+    "express": "^4.18.2",
     "uuid": "^9.0.0"
   },
   "optionalDependencies": {
     "@anthropic-ai/autogen-core": "^0.4.0",
     "@anthropic-ai/autogen-ext": "^0.4.0"
+  },
+  "devDependencies": {
+    "c8": "^10.1.3"
   }
 }

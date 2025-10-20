@@ -204,6 +204,46 @@ class ArtifactManager {
             timestamp: manifest.timestamp
         };
     }
+
+    /**
+     * List all artifacts, optionally filtered by type
+     * @param {Object} options - Filter options { type: string }
+     * @returns {Array} List of artifact manifests
+     */
+    async listArtifacts(options = {}) {
+        await this.initialize();
+        
+        const { readdirSync } = await import('fs');
+        const manifestFiles = readdirSync(this.manifestsPath).filter(f => f.endsWith('.manifest.json'));
+        
+        const manifests = [];
+        for (const file of manifestFiles) {
+            const manifestPath = join(this.manifestsPath, file);
+            const content = await readFile(manifestPath, 'utf8');
+            const manifest = JSON.parse(content);
+            
+            // Apply type filter if specified
+            if (!options.type || manifest.type === options.type) {
+                manifests.push(manifest);
+            }
+        }
+        
+        return manifests;
+    }
+
+    /**
+     * List all versions of an artifact
+     * @param {string} artifactId - The artifact identifier
+     * @returns {Array} List of versions
+     */
+    async listVersions(artifactId) {
+        const artifacts = await this.listArtifacts();
+        const versions = artifacts.filter(a => 
+            a.artifactId === artifactId || a.metadata.previousVersion === artifactId
+        );
+        
+        return versions.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    }
 }
 
 export default ArtifactManager;
