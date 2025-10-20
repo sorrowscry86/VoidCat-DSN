@@ -14,7 +14,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const testFiles = [
     './tests/test-ryuzu-orchestrator-agent.js',
     './tests/test-sanctuary-message-protocol.js',
-    './tests/test-autogen-runtime-manager.js'
+    './tests/test-autogen-runtime-manager.js',
+    './tests/test-artifact-manager.js',
+    './tests/test-context-engineer.js',
+    './tests/test-routing-config.js',
+    './tests/test-message-handlers.js'
 ];
 
 const testResults = {
