@@ -23,7 +23,7 @@ import {
 } from '../message-handlers.js';
 
 console.log('🚀 END-TO-END ORCHESTRATION WORKFLOW TEST\n');
-console.log('=' .repeat(60));
+console.log('='.repeat(60));
 
 // Create mock clones
 const clones = {

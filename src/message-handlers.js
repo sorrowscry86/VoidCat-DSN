@@ -24,6 +24,11 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 /**
+ * Constants
+ */
+const DEFAULT_QUERY_TYPE = 'health';
+
+/**
  * Handle TaskAssignment messages
  * Called when a clone receives a task assignment from the orchestrator
  * 
@@ -89,7 +94,7 @@ export async function handleStatusQuery(message, clone) {
             clone.role,
             message.fromClone,
             message.messageId,
-            message.queryType || 'health'
+            message.queryType || DEFAULT_QUERY_TYPE
         );
 
         // Populate cloneStatus field
